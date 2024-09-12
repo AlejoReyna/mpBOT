@@ -1,61 +1,127 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Telegraf } from 'telegraf'; // Or your preferred Telegram bot library
-
+import { Telegraf, session } from 'telegraf'; // Import session from telegraf
+import { BaseContext } from 'telegraf/typings/context';
 import OpenAI from "openai";
 
 // Replace 'YOUR_TELEGRAM_BOT_TOKEN' with your actual bot token
 const bot = new Telegraf(process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN as string);
+
+// Define the session data structure
+interface SessionData {
+  lang?: string;
+}
+
+// Add session middleware with default session data
+bot.use(session({
+  defaultSession: (): SessionData => ({})
+}));
 
 // OpenAI setup
 const openai = new OpenAI({
     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
+// Define messages in JSON objects
+const messages = {
+  en: {
+    welcome: 'Welcome to DefiBot! I can help you with investment recommendations. Please select an option:',
+    investment_recommendations: 'Investment Recommendations',
+    market_analysis: 'Market Analysis',
+    portfolio_management: 'Portfolio Management',
+    metapool_info: 'Learn About Meta Pool Investment',
+    stake_metapool: 'Stake with Meta Pool',
+    metapool_resources: 'Here are some resources to learn about Meta Pool Investment:',
+    portfolio_link: 'Please use the following link to access the Portfolio Management web app: [Portfolio Management](https://t.me/DefiMxBot/DefiFrutas)',
+    language_selection: 'Please select your language / Por favor seleccione su idioma:',
+    english: 'English',
+    spanish: 'Español',
+  },
+  es: {
+    welcome: '¡Bienvenido a DefiBot! Puedo ayudarte con recomendaciones de inversión. Por favor selecciona una opción:',
+    investment_recommendations: 'Recomendaciones de Inversión',
+    market_analysis: 'Análisis de Mercado',
+    portfolio_management: 'Gestión de Cartera',
+    metapool_info: 'Aprender sobre la Inversión en Meta Pool',
+    stake_metapool: 'Apostar con Meta Pool',
+    metapool_resources: 'Aquí hay algunos recursos para aprender sobre la Inversión en Meta Pool:',
+    portfolio_link: 'Por favor usa el siguiente enlace para acceder a la aplicación web de Gestión de Cartera: [Gestión de Cartera](https://t.me/DefiMxBot/DefiFrutas)',
+    language_selection: 'Por favor seleccione su idioma / Please select your language:',
+    english: 'English',
+    spanish: 'Español',
+  }
+};
+
 // Handle '/start' command (initial interaction)
 bot.start((ctx) => {
-
-  // Base URL from environment variable
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  // Array of image paths
-  const imagePaths = [
-    '/images/Invest01.png',
-    '/images/Invest02.png',
-    '/images/Invest03.png',
-    '/images/Invest04.png'
-  ];
-
-  // Construct full image URLs
-  const images = imagePaths.map(path => `${baseUrl}${path}`);
-
-  // Select a random image
-  const randomImage = images[Math.floor(Math.random() * images.length)];
-
-  // Send the selected image before presenting the main menu
-  ctx.replyWithPhoto(randomImage, {
-    caption: 'Welcome to DefiBot! I can help you with investment recommendations. Please select an option:',
+  ctx.reply(messages.es.language_selection, {
     reply_markup: {
-        inline_keyboard: [
-          [{ text: 'Investment Recommendations', callback_data: 'investment_recommendations' }],
-          [{ text: 'Market Analysis', callback_data: 'market_analysis' }],
-          [{ text: 'Portfolio Management', callback_data: 'portfolio_management' }],
-          [{ text: 'Learn About Meta Pool Investment', callback_data: 'metapool_info' }],
-          [{ text: 'Stake with Meta Pool', callback_data: 'stake_metapool' }],
-        ],
-      },
-    });
-
+      inline_keyboard: [
+        [{ text: messages.en.spanish, callback_data: 'lang_es' }],
+        [{ text: messages.en.english, callback_data: 'lang_en' }],
+      ],
+    },
+  });
 });
 
 // Handle callback queries
 bot.on('callback_query', async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
+  //const userId = ctx.from.id;
 
-  if (callbackData === 'metapool_info') {
-    await ctx.reply('Here are some resources to learn about Metapool Investment:');
-    await ctx.reply('1. [Metapool Official Website](https://example.com)\n2. [Metapool Whitepaper](https://example.com/whitepaper)\n3. [Metapool Investment Guide](https://example.com/guide)');
+  console.log("** **");
+  // console.log(ctx);
+  console.log(callbackData);
+
+  if (callbackData === 'lang_en' || callbackData === 'lang_es') {
+    console.log("** 1 **");
+    const lang = callbackData === 'lang_en' ? 'en' : 'es';
+    console.log(lang);
+    console.log("** 1.1 **");
+    ctx.session.lang = lang; // Store the selected language in session
+    console.log("** 1.2 **");
+
+    // Base URL from environment variable
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+    // Array of image paths
+    const imagePaths = [
+      '/images/Invest01.png',
+      '/images/Invest02.png',
+      '/images/Invest03.png',
+      '/images/Invest04.png'
+    ];
+
+    // Construct full image URLs
+    const images = imagePaths.map(path => `${baseUrl}${path}`);
+
+    // Select a random image
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+
+    // Send the selected image before presenting the main menu
+
+    console.log("** ",messages[lang].welcome);
+
+    ctx.replyWithPhoto(randomImage, {
+      caption: messages[lang].welcome,
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: messages[lang].investment_recommendations, callback_data: 'investment_recommendations' }],
+          [{ text: messages[lang].market_analysis, callback_data: 'market_analysis' }],
+          [{ text: messages[lang].portfolio_management, callback_data: 'portfolio_management' }],
+          [{ text: messages[lang].metapool_info, callback_data: 'metapool_info' }],
+          [{ text: messages[lang].stake_metapool, callback_data: 'stake_metapool' }],
+        ],
+      },
+    });
+  } else if (callbackData === 'metapool_info') {
+    console.log("** 2 **");
+    const lang = ctx.session.lang || 'es';    
+    await ctx.reply(messages[lang].metapool_resources);
+    await ctx.reply('1. [Meta Pool Official Website](https://example.com)\n2. [Meta Pool Whitepaper](https://example.com/whitepaper)\n3. [Meta Pool Investment Guide](https://example.com/guide)');
   } else if (callbackData === 'portfolio_management') {
-    await ctx.reply('Please use the following link to access the Portfolio Management web app: [Portfolio Management](https://t.me/DefiMxBot/DefiFrutas)');
+    console.log("** 3 **");
+   const lang = ctx.session.lang || 'es';
+    await ctx.reply(messages[lang].portfolio_link);
   }
 
   // ... (Handle other callback queries)
@@ -64,9 +130,9 @@ bot.on('callback_query', async (ctx) => {
 // Handle generic text messages
 bot.on('text', async (ctx) => {
   const userMessage = ctx.message.text;
+  const lang = ctx.session.lang || 'es';
 
   try {
-
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
@@ -79,12 +145,6 @@ bot.on('text', async (ctx) => {
     });
 
     console.log(response);
-
-    // const response = await openai.createCompletion({
-    //   model: 'text-davinci-003',
-    //   prompt: `Answer the following question about DeFi: ${userMessage}`,
-    //   max_tokens: 150,
-    // });
 
     const answer = response.choices[0].message?.content ?? '';
     await ctx.reply(answer);
