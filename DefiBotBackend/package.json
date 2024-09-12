@@ -20,7 +20,8 @@
     "react-dom": "^18",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.16.3",
+    "thirdweb": "^5.53.0"
   },
   "devDependencies": {
     "@types/node": "^20",
