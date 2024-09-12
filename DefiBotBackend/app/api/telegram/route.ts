@@ -24,27 +24,27 @@ const openai = new OpenAI({
 // Define messages in JSON objects
 const messages = {
   en: {
-    welcome: 'Welcome to mpBot! I can help you with investment recommendations. Please select an option:',
+    welcome: 'Welcome to Poolito Bot! I can help you with investment recommendations. \nPlease select an option:',
     investment_recommendations: 'Investment Recommendations',
     market_analysis: 'Market Analysis',
     portfolio_management: 'Portfolio Management',
     metapool_info: 'Learn About Meta Pool Investment',
     stake_metapool: 'Stake with Meta Pool',
     metapool_resources: 'Here are some resources to learn about Meta Pool Investment:',
-    portfolio_link: `Please use the following link to access the Portfolio Management web app: [Portfolio Management](${process.env.NEXT_PUBLIC_TELEGRAM_APP_URL})`,
+    portfolio_link: "Please use the following link to access the Portfolio Management web app: [Portfolio Management](https://www.metapool.app/dashboard/)",
     language_selection: 'Please select your language / Por favor seleccione su idioma:',
     english: 'English',
     spanish: 'Español',
   },
   es: {
-    welcome: '¡Bienvenido a mpBot! Puedo ayudarte con recomendaciones de inversión. Por favor selecciona una opción:',
+    welcome: '¡Bienvenido a Poolito Bot! Puedo ayudarte con recomendaciones de inversión. \nPor favor selecciona una opción:',
     investment_recommendations: 'Recomendaciones de Inversión',
     market_analysis: 'Análisis de Mercado',
     portfolio_management: 'Gestión de Cartera',
-    metapool_info: 'Aprender sobre la Inversión en Meta Pool',
-    stake_metapool: 'Apostar con Meta Pool',
-    metapool_resources: 'Aquí hay algunos recursos para aprender sobre la Inversión en Meta Pool:',
-    portfolio_link: `Por favor usa el siguiente enlace para acceder a la aplicación web de Gestión de Cartera: [Gestión de Cartera](${process.env.NEXT_PUBLIC_TELEGRAM_APP_URL})`,
+    metapool_info: 'Aprender mas sobre Meta Pool',
+    stake_metapool: 'Stake con Meta Pool',
+    metapool_resources: 'Aquí hay algunos recursos para aprender sobre Meta Pool:',
+    portfolio_link: "Por favor usa el siguiente enlace para acceder a la aplicación web de Gestión de Cartera: [Gestión de Cartera](https://www.metapool.app/dashboard/)",
     language_selection: 'Por favor seleccione su idioma / Please select your language:',
     english: 'English',
     spanish: 'Español',
@@ -53,6 +53,10 @@ const messages = {
 
 // Handle '/start' command (initial interaction)
 bot.start((ctx) => {
+  
+  console.log("** start **");
+  console.log(ctx);
+
   ctx.reply(messages.es.language_selection, {
     reply_markup: {
       inline_keyboard: [
@@ -85,10 +89,8 @@ bot.on('callback_query', async (ctx) => {
 
     // Array of image paths
     const imagePaths = [
-      '/images/Invest01.png',
-      '/images/Invest02.png',
-      '/images/Invest03.png',
-      '/images/Invest04.png'
+      '/images/PoolitoBot.png',
+      '/images/PoolitoBot.png',
     ];
 
     // Construct full image URLs
@@ -105,23 +107,30 @@ bot.on('callback_query', async (ctx) => {
       caption: messages[lang].welcome,
       reply_markup: {
         inline_keyboard: [
-          [{ text: messages[lang].investment_recommendations, callback_data: 'investment_recommendations' }],
+          // [{ text: messages[lang].investment_recommendations, callback_data: 'investment_recommendations'}],
           [{ text: messages[lang].market_analysis, callback_data: 'market_analysis' }],
           [{ text: messages[lang].portfolio_management, callback_data: 'portfolio_management' }],
           [{ text: messages[lang].metapool_info, callback_data: 'metapool_info' }],
-          [{ text: messages[lang].stake_metapool, callback_data: 'stake_metapool' }],
+          [{ text: messages[lang].stake_metapool, callback_data: 'stake_metapool', url: "t.me/PoolitoAssistantBot/PoolitoApp" }],
         ],
       },
     });
   } else if (callbackData === 'metapool_info') {
+
     console.log("** 2 **");
     const lang = ctx.session.lang || 'es';    
     await ctx.reply(messages[lang].metapool_resources);
-    await ctx.reply('1. [Meta Pool Official Website](https://example.com)\n2. [Meta Pool Whitepaper](https://example.com/whitepaper)\n3. [Meta Pool Investment Guide](https://example.com/guide)');
+    await ctx.reply('1. [Meta Pool Official Website](https://www.metapool.app/)\n2. [Meta Pool Documentation](https://docs.metapool.app/master)\n3. [Meta Pool Telegram Group](https://t.me/MetaPoolOfficialGroup)');
+
   } else if (callbackData === 'portfolio_management') {
     console.log("** 3 **");
-   const lang = ctx.session.lang || 'es';
+    const lang = ctx.session.lang || 'es';
     await ctx.reply(messages[lang].portfolio_link);
+  } else if (callbackData === 'market_analysis') {
+    console.log("** 4 **");
+    const lang = ctx.session.lang || 'es';
+    await ctx.reply(messages[lang].market_analysis);
+    await ctx.reply('1. [Meta Pool Official Liquity](https://www.metapool.app/liquidity/)');
   }
 
   // ... (Handle other callback queries)
