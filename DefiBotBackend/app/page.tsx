@@ -2,11 +2,25 @@
 
 import { createThirdwebClient } from "thirdweb";
 import { ConnectButton } from "thirdweb/react";
-import { ethereum, sepolia, defineChain } from "thirdweb/chains";
+import { sepolia, defineChain } from "thirdweb/chains";
 
+import {
+  inAppWallet,
+  createWallet,
+} from "thirdweb/wallets";
 
 export const client = createThirdwebClient({ clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "" });
 
+const wallets = [
+  inAppWallet({
+    auth: {
+      options: ["telegram", "google", "email", "phone"],
+    },
+  }),
+  createWallet("io.metamask"),
+  createWallet("com.coinbase.wallet"),
+  createWallet("com.binance"),
+];
 
 export default function Home() {
   // Check if window.TelegramGameProxy is available
@@ -23,6 +37,8 @@ export default function Home() {
         client={client}
         chain={defineChain(sepolia)} 
         chains={[ sepolia]}
+        wallets={wallets}
+        connectModal={{ size: "compact" }}        
       />
     </div>
   );
