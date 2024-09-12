@@ -24,7 +24,7 @@ const openai = new OpenAI({
 // Define messages in JSON objects
 const messages = {
   en: {
-    welcome: 'Welcome to DefiBot! I can help you with investment recommendations. Please select an option:',
+    welcome: 'Welcome to mpBot! I can help you with investment recommendations. Please select an option:',
     investment_recommendations: 'Investment Recommendations',
     market_analysis: 'Market Analysis',
     portfolio_management: 'Portfolio Management',
@@ -37,7 +37,7 @@ const messages = {
     spanish: 'Español',
   },
   es: {
-    welcome: '¡Bienvenido a DefiBot! Puedo ayudarte con recomendaciones de inversión. Por favor selecciona una opción:',
+    welcome: '¡Bienvenido a mpBot! Puedo ayudarte con recomendaciones de inversión. Por favor selecciona una opción:',
     investment_recommendations: 'Recomendaciones de Inversión',
     market_analysis: 'Análisis de Mercado',
     portfolio_management: 'Gestión de Cartera',
