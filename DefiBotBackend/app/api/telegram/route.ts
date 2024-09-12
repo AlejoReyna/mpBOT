@@ -72,17 +72,12 @@ bot.on('callback_query', async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
   //const userId = ctx.from.id;
 
-  console.log("** **");
-  // console.log(ctx);
   console.log(callbackData);
 
   if (callbackData === 'lang_en' || callbackData === 'lang_es') {
-    console.log("** 1 **");
+
     const lang = callbackData === 'lang_en' ? 'en' : 'es';
-    console.log(lang);
-    console.log("** 1.1 **");
     ctx.session.lang = lang; // Store the selected language in session
-    console.log("** 1.2 **");
 
     // Base URL from environment variable
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -101,36 +96,35 @@ bot.on('callback_query', async (ctx) => {
 
     // Send the selected image before presenting the main menu
 
-    console.log("** ",messages[lang].welcome);
-
     ctx.replyWithPhoto(randomImage, {
       caption: messages[lang].welcome,
       reply_markup: {
         inline_keyboard: [
           // [{ text: messages[lang].investment_recommendations, callback_data: 'investment_recommendations'}],
+          [{ text: messages[lang].stake_metapool, callback_data: 'stake_metapool', url: "t.me/PoolitoAssistantBot/PoolitoApp" }],
           [{ text: messages[lang].market_analysis, callback_data: 'market_analysis' }],
           [{ text: messages[lang].portfolio_management, callback_data: 'portfolio_management' }],
           [{ text: messages[lang].metapool_info, callback_data: 'metapool_info' }],
-          [{ text: messages[lang].stake_metapool, callback_data: 'stake_metapool', url: "t.me/PoolitoAssistantBot/PoolitoApp" }],
         ],
       },
     });
   } else if (callbackData === 'metapool_info') {
 
-    console.log("** 2 **");
     const lang = ctx.session.lang || 'es';    
     await ctx.reply(messages[lang].metapool_resources);
     await ctx.reply('1. [Meta Pool Official Website](https://www.metapool.app/)\n2. [Meta Pool Documentation](https://docs.metapool.app/master)\n3. [Meta Pool Telegram Group](https://t.me/MetaPoolOfficialGroup)');
 
   } else if (callbackData === 'portfolio_management') {
-    console.log("** 3 **");
+
     const lang = ctx.session.lang || 'es';
     await ctx.reply(messages[lang].portfolio_link);
+
   } else if (callbackData === 'market_analysis') {
-    console.log("** 4 **");
+
     const lang = ctx.session.lang || 'es';
     await ctx.reply(messages[lang].market_analysis);
     await ctx.reply('1. [Meta Pool Official Liquity](https://www.metapool.app/liquidity/)');
+
   }
 
   // ... (Handle other callback queries)
