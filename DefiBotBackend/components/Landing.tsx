@@ -1,34 +1,23 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ConnectButton } from "thirdweb/react";
 import { sepolia, defineChain } from "thirdweb/chains";
 import { useActiveAccount, useWalletBalance } from "thirdweb/react";
-
 import { client, wallets } from "@/providers/ThirdwebProvider";
 import UserBalance from "@/components/UserBalance";
-
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Wallet, ArrowUpRight, ArrowDownLeft, Loader2 } from 'lucide-react'
-
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Wallet, ArrowUpRight, ArrowDownLeft, Loader2 } from 'lucide-react';
 import { toEther, toWei } from "thirdweb/utils";
-import { prepareContractCall } from "thirdweb"
+import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { createThirdwebClient, getContract, resolveMethod } from "thirdweb";
-
-
-// Mock data for demonstration
-const mockTransactions = [
-  { id: 1, type: 'deposit', amount: '0.5', date: '2023-06-01' },
-  { id: 2, type: 'deposit', amount: '0.25', date: '2023-06-05' },
-  { id: 3, type: 'withdrawal', amount: '0.1', date: '2023-06-10' },
-]
+import { getContract } from "thirdweb";
+import { fetchTransactions } from '@/utils/fetchTransactions';
 
 export const contract = getContract({ 
   client, 
@@ -37,22 +26,30 @@ export const contract = getContract({
 });
 
 export default function LandingComponent() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [transactions, setTransactions] = useState([]);
   const account = useActiveAccount();
+
+  useEffect(() => {
+    if (account?.address) {
+      console.log("Fetching transactions for", account.address);
+      fetchTransactions(account.address, contract.address).then(setTransactions);
+    }
+  }, [account]);
 
   const processLogin = async () => {
     setIsLoggedIn(true);
-  }
+  };
+
   const processLogout = async () => {
     setIsLoggedIn(false);
-  }
-  
-  const { mutate: sendTransaction, data: transactionResult } = useSendTransaction();
+  };
 
-  const [isDepositOpen, setIsDepositOpen] = useState(false)
-  const [amount, setAmount] = useState('0')
-  const [isWei, setIsWei] = useState(false) // New state to control the type
-  const [isLoading, setIsLoading] = useState(false)
+  const { mutate: sendTransaction, data: transactionResult } = useSendTransaction();
+  const [isDepositOpen, setIsDepositOpen] = useState(false);
+  const [amount, setAmount] = useState('0');
+  const [isWei, setIsWei] = useState(false); // New state to control the type
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDeposit = async () => {
     setIsLoading(true); // Set loading to true
@@ -76,21 +73,20 @@ export default function LandingComponent() {
       setIsDepositOpen(false); // Close the popup
       setAmount('0'); // Reset the amount
     }
-  }
+  };
 
   const toggleUnit = () => {
     if (amount === '0') {
-      return
+      return;
     }
-    const convertedAmount = isWei ? toEther(BigInt(amount)): toWei(amount)
-    setIsWei(!isWei)
-    setAmount(convertedAmount.toString()) // Convert amount when toggling and ensure it's a string
-  }
+    const convertedAmount = isWei ? toEther(BigInt(amount)) : toWei(amount);
+    setIsWei(!isWei);
+    setAmount(convertedAmount.toString()); // Convert amount when toggling and ensure it's a string
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-
         <section className="w-full py-6 md:py-6 lg:py-8">
           <div className="container px-4 md:px-6 flex justify-center items-center">
             <ConnectButton
@@ -134,10 +130,8 @@ export default function LandingComponent() {
         )}
 
         {isLoggedIn && (
-
           <section className="w-full py-3 md:py-6 lg:py-8">
             <div className="container px-4 md:px-6 flex justify-center items-center">
-
               <div className="container mx-auto p-4">
                 <Card className="mb-8">
                   <CardHeader>
@@ -152,7 +146,7 @@ export default function LandingComponent() {
                   </CardContent>
                 </Card>
 
-                <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen} >
+                <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
                   <DialogContent className="bg-white text-black">
                     <DialogHeader>
                       <DialogTitle>Deposit {isWei ? 'Wei' : 'ETH'}</DialogTitle> {/* Display unit */}
@@ -202,7 +196,6 @@ export default function LandingComponent() {
                           'Send'
                         )}
                       </Button>
-
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -221,18 +214,18 @@ export default function LandingComponent() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {mockTransactions.map((tx) => (
-                          <TableRow key={tx.id}>
+                        {transactions.map((tx) => (
+                          <TableRow key={tx.hash}>
                             <TableCell>
-                              {tx.type === 'deposit' ? (
+                              {tx.to.toLowerCase() === contract.address.toLowerCase() ? (
                                 <ArrowDownLeft className="text-green-500 inline mr-2" />
                               ) : (
                                 <ArrowUpRight className="text-red-500 inline mr-2" />
                               )}
-                              {tx.type}
+                              {tx.to.toLowerCase() === contract.address.toLowerCase() ? 'deposit' : 'withdrawal'}
                             </TableCell>
-                            <TableCell>{tx.amount}</TableCell>
-                            <TableCell>{tx.date}</TableCell>
+                            <TableCell>{parseFloat(tx.value) / 1e18}</TableCell>
+                            <TableCell>{new Date(tx.timeStamp * 1000).toLocaleString()}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -240,7 +233,6 @@ export default function LandingComponent() {
                   </CardContent>
                 </Card>
               </div>
-
             </div>
           </section>
         )}
@@ -254,5 +246,5 @@ export default function LandingComponent() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
