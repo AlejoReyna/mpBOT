@@ -211,6 +211,7 @@ export default function LandingComponent() {
                           <TableHead>Type</TableHead>
                           <TableHead>Amount (ETH)</TableHead>
                           <TableHead>Date</TableHead>
+                          <TableHead>Transaction ID</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -226,6 +227,11 @@ export default function LandingComponent() {
                             </TableCell>
                             <TableCell>{parseFloat(tx.value) / 1e18}</TableCell>
                             <TableCell>{new Date(tx.timeStamp * 1000).toLocaleString()}</TableCell>
+                            <TableCell>
+                              <a href={`https://sepolia.etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                                {`${tx.hash.slice(0, 8)}...${tx.hash.slice(-6)}`}
+                              </a>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
