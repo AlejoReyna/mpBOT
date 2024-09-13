@@ -1,0 +1,3 @@
+[submodule "SmartContracts"]
+	path = SmartContracts
+	url = https://github.com/abrahamrivv/mpBOT.git
