@@ -1,6 +1,7 @@
 # mpBot : DeFI en un chatbot 
-
+![poolito](https://github.com/user-attachments/assets/e1d779a0-e5e2-47c5-8398-ce6d91a6145c)
 ## Documentación del código:
+
 (Basándonos en el path: DefiBotBackend/app/api/telegram)
 
 ## 1. Definición del Bot
