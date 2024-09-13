@@ -15,10 +15,13 @@ import UserBalance from "@/components/UserBalance";
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Wallet, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
+import { Wallet, ArrowUpRight, ArrowDownLeft, Loader2 } from 'lucide-react'
 
-import { fromGwei } from "thirdweb/utils";
-import { toEther } from "thirdweb/utils";
+import { toEther, toWei } from "thirdweb/utils";
+import { prepareContractCall } from "thirdweb"
+import { useSendTransaction } from "thirdweb/react";
+import { createThirdwebClient, getContract, resolveMethod } from "thirdweb";
+
 
 // Mock data for demonstration
 const mockTransactions = [
@@ -26,6 +29,12 @@ const mockTransactions = [
   { id: 2, type: 'deposit', amount: '0.25', date: '2023-06-05' },
   { id: 3, type: 'withdrawal', amount: '0.1', date: '2023-06-10' },
 ]
+
+export const contract = getContract({ 
+  client, 
+  chain: defineChain(11155111), 
+  address: "0xdB59Dc61a6387502D00AA2DAe826e3B6836407EB"
+});
 
 export default function LandingComponent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -37,16 +46,45 @@ export default function LandingComponent() {
   const processLogout = async () => {
     setIsLoggedIn(false);
   }
-
+  
+  const { mutate: sendTransaction, data: transactionResult } = useSendTransaction();
 
   const [isDepositOpen, setIsDepositOpen] = useState(false)
   const [amount, setAmount] = useState('0')
+  const [isWei, setIsWei] = useState(false) // New state to control the type
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleDeposit = () => {
-    // Here you would handle the actual deposit logic
-    console.log(`Depositing ${amount} ETH to ${account?.address}`)
-    setIsDepositOpen(false)
-    setAmount('0')
+  const handleDeposit = async () => {
+    setIsLoading(true); // Set loading to true
+    const depositAmount = isWei ? amount : toWei(amount); // Convert to Wei if needed
+    console.log(`Depositing ${depositAmount} Wei to ${account?.address}`);
+
+    const transaction = prepareContractCall({ 
+      contract, 
+      method: "function depositETH(address _receiver) payable returns (uint256)", 
+      params: [account?.address || "0x0"],
+      value: BigInt(depositAmount)
+    });
+
+    try {
+      const result = await sendTransaction(transaction); // Wait for the transaction to finish
+      console.log("Transaction result:", result);
+    } catch (error) {
+      console.error("Transaction failed", error);
+    } finally {
+      setIsLoading(false); // Set loading to false
+      setIsDepositOpen(false); // Close the popup
+      setAmount('0'); // Reset the amount
+    }
+  }
+
+  const toggleUnit = () => {
+    if (amount === '0') {
+      return
+    }
+    const convertedAmount = isWei ? toEther(BigInt(amount)): toWei(amount)
+    setIsWei(!isWei)
+    setAmount(convertedAmount.toString()) // Convert amount when toggling and ensure it's a string
   }
 
   return (
@@ -117,21 +155,26 @@ export default function LandingComponent() {
                 <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen} >
                   <DialogContent className="bg-white text-black">
                     <DialogHeader>
-                      <DialogTitle>Deposit ETH</DialogTitle>
+                      <DialogTitle>Deposit {isWei ? 'Wei' : 'ETH'}</DialogTitle> {/* Display unit */}
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-6 items-center gap-4">
                         <label htmlFor="amount" className="text-right">
                           Amount
                         </label>
-                        <Input
-                          id="amount"
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="col-span-5"
-                          placeholder="Enter ETH amount"
-                        />
+                        <div className="col-span-5 flex items-center">
+                          <Input
+                            id="amount"
+                            type="number"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="flex-1"
+                            placeholder={`Enter ${isWei ? 'Wei' : 'ETH'} amount`}
+                          />
+                          <Button onClick={toggleUnit} className="ml-2">
+                            {isWei ? 'To ETH' : 'To Wei'}
+                          </Button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-6 items-center gap-4">
                         <label htmlFor="address" className="text-right">
@@ -149,7 +192,17 @@ export default function LandingComponent() {
                       <Button variant="outline" onClick={() => setIsDepositOpen(false)}>
                         Cancel
                       </Button>
-                      <Button onClick={handleDeposit}>Send</Button>
+                      <Button onClick={handleDeposit} disabled={isLoading}>
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing
+                          </>
+                        ) : (
+                          'Send'
+                        )}
+                      </Button>
+
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
