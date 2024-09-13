@@ -1,8 +1,17 @@
 # mpBot : DeFI en un chatbot 
 
-<img width="863" alt="Screenshot 2024-09-13 at 2 04 19 a m" src="https://github.com/user-attachments/assets/bb6aa8ec-0e1b-43ab-b3fc-bc3e5c013b4c">
-<img width="787" alt="Screenshot 2024-09-13 at 2 28 16 a m" src="https://github.com/user-attachments/assets/0648cf3c-15bd-4602-b1cd-f8d52f6b4274">
-<img width="562" alt="Screenshot 2024-09-13 at 2 36 59 a m" src="https://github.com/user-attachments/assets/6b769f33-1844-48dc-8296-cd882f236d67">
+<p align="center">
+  <img width="863" alt="Screenshot 2024-09-13 at 2 04 19 a m" src="https://github.com/user-attachments/assets/bb6aa8ec-0e1b-43ab-b3fc-bc3e5c013b4c">
+</p>
+<p align="center">
+  <img width="787" alt="Screenshot 2024-09-13 at 2 28 16 a m" src="https://github.com/user-attachments/assets/0648cf3c-15bd-4602-b1cd-f8d52f6b4274">
+</p>
+<p align="center">
+  <img width="562" alt="Screenshot 2024-09-13 at 2 36 59 a m" src="https://github.com/user-attachments/assets/6b769f33-1844-48dc-8296-cd882f236d67">
+</p>
+<p align="center">
+  <img width="633" alt="Screenshot 2024-09-13 at 2 43 00 a m" src="https://github.com/user-attachments/assets/388db22a-39b1-4229-807f-ed89d336d3c8">
+</p>
 
 
 Link para probar nuestro producto: https://t.me/PoolitoAssistantBot
