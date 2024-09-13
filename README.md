@@ -2,7 +2,7 @@
 ![poolito](https://github.com/user-attachments/assets/e1d779a0-e5e2-47c5-8398-ce6d91a6145c)
 ## Documentación del código:
 
-(Basándonos en el path: DefiBotBackend/app/api/telegram)
+(Basándonos en el path: DefiBotBackend/app/api/telegram; ya que es el que contiene la funcionalidad, el directorio Web fue la versión inicial del proyecto)
 
 ## 1. Definición del Bot
 Este proyecto implementa un bot de Telegram utilizando el framework Next.js y la biblioteca Telegraf. El bot está diseñado para proporcionar recomendaciones de inversión y información sobre Meta Pool, un servicio de staking. También integra la API de OpenAI para responder preguntas generales sobre DeFi.
@@ -218,9 +218,7 @@ else if (callbackData === 'market_analysis') {
 
 Cuando se selecciona "Market Analysis", el bot responde con información sobre análisis de mercado y proporciona un enlace a la liquidez oficial de Meta Pool.
 
-# 7. Documentación del Manejo de Mensajes
-
-## Manejo de Mensajes de Texto Genéricos
+## 7. Manejo de Mensajes de Texto Genéricos
 
 ```typescript
 bot.on('text', async (ctx) => {
@@ -282,3 +280,141 @@ Esta función `POST` maneja las actualizaciones entrantes del webhook de Telegra
 2. Pasa la actualización al método `handleUpdate` de Telegraf para su procesamiento.
 3. Si todo es exitoso, devuelve una respuesta "OK" con un estado 200.
 4. En caso de error, registra el error y devuelve una respuesta de "Error" con un estado 500.
+
+### Funcionalidad de la Landing Page 
+La conexión con la wallet es fundamental para el funcionamiento del bot, por lo tanto, en el chat se redigirá al usuario hacia la web. 
+
+# Documentación del Componente Landing de Poolito
+
+## Descripción General
+
+Este componente React implementa la página principal de la aplicación Poolito, un asistente para Meta Pool. Incluye funcionalidades de conexión de wallet, visualización de balance, depósito de ETH y visualización del historial de transacciones.
+
+## Importaciones y Configuración
+
+```typescript
+'use client'
+
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+// ... (otras importaciones)
+import { fetchTransactions } from '@/utils/fetchTransactions';
+
+export const contract = getContract({ 
+  client, 
+  chain: defineChain(11155111), 
+  address: "0xdB59Dc61a6387502D00AA2DAe826e3B6836407EB"
+});
+```
+
+- Utiliza el modo 'client' de Next.js.
+- Importa componentes de UI personalizados y de terceros.
+- Define el contrato de Poolito en la red Sepolia.
+
+## Componente Principal: LandingComponent
+
+```typescript
+export default function LandingComponent() {
+  // ... (estados y lógica del componente)
+}
+```
+
+### Estados Principales
+
+```typescript
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [transactions, setTransactions] = useState([]);
+const account = useActiveAccount();
+// ... (otros estados)
+```
+
+### Efectos y Funciones Principales
+
+1. Carga de Transacciones
+   ```typescript
+   useEffect(() => {
+     if (account?.address) {
+       console.log("Fetching transactions for", account.address);
+       fetchTransactions(account.address, contract.address).then(setTransactions);
+     }
+   }, [account]);
+   ```
+
+2. Manejo de Depósitos
+   ```typescript
+   const handleDeposit = async () => {
+     // ... (lógica de depósito)
+   };
+   ```
+
+3. Actualización de Transacciones
+   ```typescript
+   const refreshTransactions = async () => {
+     // ... (lógica de actualización)
+   };
+   ```
+
+### Estructura del Render
+
+1. Botón de Conexión
+   ```typescript
+   <ConnectButton
+     client={client}
+     chain={defineChain(sepolia)}
+     // ... (otras props)
+   />
+   ```
+
+2. Sección de Bienvenida
+   ```typescript
+   <section className="w-full py-3 sm:py-3 md:py-6 lg:py-8 xl:py-12">
+     {/* ... */}
+   </section>
+   ```
+
+3. Contenido Principal (cuando está logueado)
+   ```typescript
+   {isLoggedIn && (
+     <section className="w-full py-3 md:py-6 lg:py-8">
+       {/* ... */}
+     </section>
+   )}
+   ```
+
+   - Muestra el balance de Meta Pool
+   - Permite realizar depósitos
+   - Muestra el historial de transacciones
+
+### Componentes Modales
+
+1. Diálogo de Depósito
+   ```typescript
+   <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
+     {/* ... */}
+   </Dialog>
+   ```
+
+### Tabla de Transacciones
+
+```typescript
+<Table>
+  <TableHeader>
+    {/* ... */}
+  </TableHeader>
+  <TableBody>
+    {transactions.map((tx) => (
+      <TableRow key={tx.hash}>
+        {/* ... */}
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+```
+
+## Funcionalidades Clave
+
+1. **Conexión de Wallet**: Utiliza `ConnectButton` para manejar la autenticación del usuario.
+2. **Visualización de Balance**: Componente `UserBalance` muestra el saldo del usuario.
+3. **Depósito de ETH**: Permite al usuario depositar ETH en el contrato de Poolito.
+4. **Historial de Transacciones**: Muestra un registro de depósitos y retiros.
+5. **Actualización en Tiempo Real**: Permite refrescar manualmente las transacciones.
