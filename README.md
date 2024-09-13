@@ -4,7 +4,7 @@
 (Basándonos en el path: DefiBotBackend/app/api/telegram)
 
 ## 1. Definición del Bot
-Este código implementa un bot de Telegram utilizando el framework Next.js y la biblioteca Telegraf. El bot está diseñado para proporcionar recomendaciones de inversión y información sobre Meta Pool, un servicio de staking. También integra la API de OpenAI para responder preguntas generales sobre DeFi.
+Este proyecto implementa un bot de Telegram utilizando el framework Next.js y la biblioteca Telegraf. El bot está diseñado para proporcionar recomendaciones de inversión y información sobre Meta Pool, un servicio de staking. También integra la API de OpenAI para responder preguntas generales sobre DeFi.
 ```typescript
 const bot = new Telegraf(process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN as string);
 
@@ -94,3 +94,28 @@ Cada idioma incluye los siguientes mensajes:
 - language_selection: Mensaje para selección de idioma
 - english: Etiqueta para el idioma inglés
 - spanish: Etiqueta para el idioma español
+
+```typescript
+bot.start((ctx) => {
+  
+  console.log("** start **");
+  console.log(ctx);
+
+  ctx.reply(messages.es.language_selection, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: messages.en.spanish, callback_data: 'lang_es' }],
+        [{ text: messages.en.english, callback_data: 'lang_en' }],
+      ],
+    },
+  });
+});
+```
+- bot.start() define un manejador para el comando /start.
+- (ctx) => { ... } es una función de flecha que se ejecutará cuando se reciba el comando /start. ctx es el contexto de la conversación, que contiene información sobre el mensaje y métodos para responder.
+- ctx.reply() envía una respuesta al usuario.
+- messages.es.language_selection es el texto de la respuesta, que pide al usuario que seleccione un idioma.
+- El objeto reply_markup define un teclado en línea (inline keyboard) con dos botones:
+* Un botón para español con el texto messages.en.spanish y datos de callback 'lang_es'.
+* Un botón para inglés con el texto messages.en.english y datos de callback 'lang_en'
+
