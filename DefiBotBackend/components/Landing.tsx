@@ -209,7 +209,7 @@ export default function LandingComponent() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Type</TableHead>
-                          <TableHead>Amount (ETH)</TableHead>
+                          <TableHead>Amount</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Transaction ID</TableHead>
                         </TableRow>
@@ -225,7 +225,7 @@ export default function LandingComponent() {
                               )}
                               {tx.to.toLowerCase() === contract.address.toLowerCase() ? 'deposit' : 'withdrawal'}
                             </TableCell>
-                            <TableCell>{parseFloat(tx.value) / 1e18}</TableCell>
+                            <TableCell className="text-right">{parseFloat(tx.value) / 1e18} ETH</TableCell>
                             <TableCell>{new Date(tx.timeStamp * 1000).toLocaleString()}</TableCell>
                             <TableCell>
                               <a href={`https://sepolia.etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
