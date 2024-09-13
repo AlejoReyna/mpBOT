@@ -12,7 +12,7 @@ import UserBalance from "@/components/UserBalance";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, ArrowUpRight, ArrowDownLeft, Loader2 } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDownLeft, Loader2 , RefreshCcw} from 'lucide-react';
 import { toEther, toWei } from "thirdweb/utils";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
@@ -82,6 +82,14 @@ export default function LandingComponent() {
     const convertedAmount = isWei ? toEther(BigInt(amount)) : toWei(amount);
     setIsWei(!isWei);
     setAmount(convertedAmount.toString()); // Convert amount when toggling and ensure it's a string
+  };
+
+  const refreshTransactions = async () => {
+    if (account?.address) {
+      console.log("Refreshing transactions for", account.address);
+      const newTransactions = await fetchTransactions(account.address, contract.address);
+      setTransactions(newTransactions);
+    }
   };
 
   return (
@@ -201,8 +209,12 @@ export default function LandingComponent() {
                 </Dialog>
 
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Transaction History</CardTitle>
+                  <CardHeader className="flex justify-between items-center w-full">
+                    <CardTitle>
+                      <span className="text-2xl font-bold mr-12">Transaction History</span>
+                      <Button onClick={refreshTransactions} className="ml-12"><RefreshCcw className="text-white" /></Button>
+                    </CardTitle>
+
                   </CardHeader>
                   <CardContent>
                     <Table>
