@@ -26,7 +26,7 @@ Link para probar nuestro producto: https://t.me/PoolitoAssistantBot
 
 (Basándonos en el path: DefiBotBackend/app/api/telegram; ya que es el que contiene la funcionalidad, el directorio Web fue la versión inicial del proyecto)
 
-## 1. Definición del Bot
+## Definición del Bot
 Este proyecto implementa un bot de Telegram utilizando el framework Next.js y la biblioteca Telegraf. El bot está diseñado para proporcionar recomendaciones de inversión y información sobre Meta Pool, un servicio de staking. También integra la API de OpenAI para responder preguntas generales sobre DeFi.
 ```typescript
 const bot = new Telegraf(process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN as string);
@@ -59,7 +59,7 @@ lang es el nombre de una propiedad.
 
 En este contexto, SessionData se está utilizando para tipar los datos de sesión del bot. Está diciendo que cada sesión de usuario puede tener una propiedad lang opcional que, si está presente, será una cadena que probablemente represente el idioma preferido del usuario.
 
-## 2. Configuración del middleware de sesión:
+## Configuración del middleware de sesión:
    
 ```typescript
 bot.use(session({
@@ -75,7 +75,7 @@ Esta parte configura el middleware de sesión para el bot de Telegram.
 Retorna un objeto vacío {} que cumple con la interfaz SessionData.
 Esto significa que cada nueva sesión comenzará con un objeto vacío, que puede luego poblarse con datos como el idioma preferido del usuario.
 
-## 3. Configuración de OpenAI 
+## Configuración de OpenAI 
 
 ```typescript
 const openai = new OpenAI({
@@ -93,7 +93,7 @@ El objeto pasado como argumento contiene la configuración para este cliente:
 
 Esta configuración permite al bot interactuar con la API de OpenAI, lo cual se utiliza más adelante en el código para generar respuestas a preguntas de los usuarios sobre DeFi en Metapool.
 
-## 4. Configuración de mensajes 
+## Configuración de mensajes 
 
 ```typescript
 const messages = {
@@ -142,7 +142,7 @@ bot.start((ctx) => {
  Un botón para español con el texto messages.en.spanish y datos de callback 'lang_es'.
  Un botón para inglés con el texto messages.en.english y datos de callback 'lang_en'
 
-## 5. Manejador de Selección de Idioma y Preparación de Bienvenida
+## Manejador de Selección de Idioma y Preparación de Bienvenida
 
 ```typescript
 bot.on('callback_query', async (ctx) => {
@@ -180,7 +180,7 @@ bot.on('callback_query', async (ctx) => {
 Este código maneja la selección de idioma del usuario, almacena la preferencia y prepara los datos necesarios para enviar una imagen de bienvenida personalizada.
 
 
-## 6. Generación y Envío de Imagen Aleatoria
+## Generación y Envío de Imagen Aleatoria
 
 ```typescript
 // Construct full image URLs
@@ -205,7 +205,7 @@ ctx.replyWithPhoto(randomImage, {
 
 Este código genera una URL completa para cada imagen, selecciona una aleatoriamente, y la envía como parte del mensaje de bienvenida junto con un teclado en línea para el menú principal.
 
-## 7. Manejo de Callbacks
+## Manejo de Callbacks
 
 ### Meta Pool Info
 ```typescript
@@ -239,7 +239,7 @@ else if (callbackData === 'market_analysis') {
 
 Cuando se selecciona "Market Analysis", el bot responde con información sobre análisis de mercado y proporciona un enlace a la liquidez oficial de Meta Pool.
 
-## 8. Manejo de Mensajes de Texto Genéricos
+## Manejo de Mensajes de Texto Genéricos
 
 ```typescript
 bot.on('text', async (ctx) => {
