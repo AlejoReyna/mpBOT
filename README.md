@@ -1,5 +1,14 @@
-# mpBot : DeFI en un chatbot 
+## mpBot : DeFI en un chatbot 
 
+# Índice de mpBot: DeFi en un chatbot
+
+   
+
+
+Link para probar nuestro producto: https://t.me/PoolitoAssistantBot
+![poolito](https://github.com/user-attachments/assets/e1d779a0-e5e2-47c5-8398-ce6d91a6145c)
+
+## Diagrama de flujo del sistema
 <p align="center">
   <img width="863" alt="Screenshot 2024-09-13 at 2 04 19 a m" src="https://github.com/user-attachments/assets/bb6aa8ec-0e1b-43ab-b3fc-bc3e5c013b4c">
 </p>
@@ -13,9 +22,6 @@
   <img width="633" alt="Screenshot 2024-09-13 at 2 43 00 a m" src="https://github.com/user-attachments/assets/388db22a-39b1-4229-807f-ed89d336d3c8">
 </p>
 
-
-Link para probar nuestro producto: https://t.me/PoolitoAssistantBot
-![poolito](https://github.com/user-attachments/assets/e1d779a0-e5e2-47c5-8398-ce6d91a6145c)
 ## Documentación del código:
 
 (Basándonos en el path: DefiBotBackend/app/api/telegram; ya que es el que contiene la funcionalidad, el directorio Web fue la versión inicial del proyecto)
@@ -173,11 +179,10 @@ bot.on('callback_query', async (ctx) => {
 
 Este código maneja la selección de idioma del usuario, almacena la preferencia y prepara los datos necesarios para enviar una imagen de bienvenida personalizada.
 
-# Documentación del Menú Principal del Bot Poolito
 
-## Generación y Envío de Imagen Aleatoria
+## 6. Generación y Envío de Imagen Aleatoria
 
-```javascript
+```typescript
 // Construct full image URLs
 const images = imagePaths.map(path => `${baseUrl}${path}`);
 
@@ -200,7 +205,7 @@ ctx.replyWithPhoto(randomImage, {
 
 Este código genera una URL completa para cada imagen, selecciona una aleatoriamente, y la envía como parte del mensaje de bienvenida junto con un teclado en línea para el menú principal.
 
-## 6. Manejo de Callbacks
+## 7. Manejo de Callbacks
 
 ### Meta Pool Info
 ```typescript
@@ -234,7 +239,7 @@ else if (callbackData === 'market_analysis') {
 
 Cuando se selecciona "Market Analysis", el bot responde con información sobre análisis de mercado y proporciona un enlace a la liquidez oficial de Meta Pool.
 
-## 7. Manejo de Mensajes de Texto Genéricos
+## 8. Manejo de Mensajes de Texto Genéricos
 
 ```typescript
 bot.on('text', async (ctx) => {
@@ -297,16 +302,14 @@ Esta función `POST` maneja las actualizaciones entrantes del webhook de Telegra
 3. Si todo es exitoso, devuelve una respuesta "OK" con un estado 200.
 4. En caso de error, registra el error y devuelve una respuesta de "Error" con un estado 500.
 
-### Funcionalidad de la Landing Page 
-La conexión con la wallet es fundamental para el funcionamiento del bot, por lo tanto, en el chat se redigirá al usuario hacia la web. 
 
-# Documentación del Componente Landing de Poolito
+# Landing page
 
 ## Descripción General
 
-Este componente React implementa la página principal de la aplicación Poolito, un asistente para Meta Pool. Incluye funcionalidades de conexión de wallet, visualización de balance, depósito de ETH y visualización del historial de transacciones.
+Este componente React implementa la página principal de la aplicación. Incluye funcionalidades de conexión de wallet, visualización de balance, depósito de ETH y visualización del historial de transacciones.
 
-## Importaciones y Configuración
+##  Importaciones y Configuración
 
 ```typescript
 'use client'
@@ -426,11 +429,3 @@ const account = useActiveAccount();
   </TableBody>
 </Table>
 ```
-
-## Funcionalidades Clave
-
-1. **Conexión de Wallet**: Utiliza `ConnectButton` para manejar la autenticación del usuario.
-2. **Visualización de Balance**: Componente `UserBalance` muestra el saldo del usuario.
-3. **Depósito de ETH**: Permite al usuario depositar ETH en el contrato de Poolito.
-4. **Historial de Transacciones**: Muestra un registro de depósitos y retiros.
-5. **Actualización en Tiempo Real**: Permite refrescar manualmente las transacciones.
