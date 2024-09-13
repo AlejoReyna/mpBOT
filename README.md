@@ -1,5 +1,10 @@
 # mpBot : DeFI en un chatbot 
 
+<img width="863" alt="Screenshot 2024-09-13 at 2 04 19 a m" src="https://github.com/user-attachments/assets/bb6aa8ec-0e1b-43ab-b3fc-bc3e5c013b4c">
+<img width="787" alt="Screenshot 2024-09-13 at 2 28 16 a m" src="https://github.com/user-attachments/assets/0648cf3c-15bd-4602-b1cd-f8d52f6b4274">
+<img width="562" alt="Screenshot 2024-09-13 at 2 36 59 a m" src="https://github.com/user-attachments/assets/6b769f33-1844-48dc-8296-cd882f236d67">
+
+
 Link para probar nuestro producto: https://t.me/PoolitoAssistantBot
 ![poolito](https://github.com/user-attachments/assets/e1d779a0-e5e2-47c5-8398-ce6d91a6145c)
 ## Documentación del código:
