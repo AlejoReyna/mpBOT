@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = 'GBX9TCPIBBR5X6BD47XBUYHEJTTXXFXQ4Q';
+const API_KEY = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
 const BASE_URL = 'https://api-sepolia.etherscan.io/api';
 
 export async function fetchTransactions(userWallet, contractAddress) {
