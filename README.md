@@ -1,7 +1,5 @@
 ## mpBot : DeFI en un chatbot 
 
-# Índice de mpBot: DeFi en un chatbot
-
    
 
 
